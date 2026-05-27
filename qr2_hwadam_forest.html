@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>🌲 화담숲 안내</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: 'Noto Sans KR', sans-serif;
+  background: #f4f7f2;
+  color: #2d2d2d;
+  -webkit-font-smoothing: antialiased;
+  padding-bottom: 40px;
+}
+
+.header {
+  background: linear-gradient(135deg, #1a3c1a 0%, #2d5a27 50%, #4a8c3f 100%);
+  padding: 32px 20px 28px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+.header::before {
+  content: '🌿';
+  position: absolute;
+  font-size: 120px;
+  opacity: 0.06;
+  right: -20px; top: -10px;
+}
+.header::after {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #8bc34a, #4caf50, #8bc34a);
+}
+.header h1 { font-size: 22px; font-weight: 800; color: #fff; position: relative; letter-spacing: -0.5px; }
+.header p { font-size: 13px; color: rgba(255,255,255,0.7); margin-top: 6px; font-weight: 300; position: relative; }
+
+/* Accordion */
+.accordion-section { padding: 16px; }
+.accordion-item {
+  background: #fff;
+  border-radius: 14px;
+  margin-bottom: 10px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+  border: 1px solid rgba(0,0,0,0.04);
+  overflow: hidden;
+}
+.accordion-header {
+  display: flex;
+  align-items: center;
+  padding: 16px 18px;
+  cursor: pointer;
+  gap: 12px;
+  transition: background 0.2s;
+}
+.accordion-header:active { background: #f8f8f6; }
+.accordion-header .icon { font-size: 24px; flex-shrink: 0; }
+.accordion-header .text {
+  flex: 1;
+}
+.accordion-header .title {
+  font-size: 15px; font-weight: 700; color: #1a3c1a;
+}
+.accordion-header .desc {
+  font-size: 11px; color: #999; margin-top: 2px;
+}
+.accordion-header .arrow {
+  font-size: 14px; color: #ccc; transition: transform 0.3s;
+  flex-shrink: 0;
+}
+.accordion-item.open .accordion-header .arrow {
+  transform: rotate(180deg);
+}
+.accordion-body {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.4s ease;
+}
+.accordion-item.open .accordion-body {
+  max-height: 2000px;
+}
+.accordion-content {
+  padding: 0 18px 18px;
+}
+
+/* Content Styles */
+.info-card {
+  background: #f8f7f4;
+  border-radius: 10px;
+  padding: 14px;
+  margin-bottom: 10px;
+}
+.info-card h4 {
+  font-size: 13px; font-weight: 700; color: #2d5a27;
+  margin-bottom: 8px;
+}
+.info-card p {
+  font-size: 13px; color: #555; line-height: 1.7;
+}
+.info-card .row {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 5px 0; font-size: 13px;
+  border-bottom: 1px solid rgba(0,0,0,0.05);
+}
+.info-card .row:last-child { border: none; }
+.info-card .row .label { color: #555; }
+.info-card .row .value { color: #2d5a27; font-weight: 600; font-size: 12px; }
+
+.course-step {
+  display: flex; gap: 12px; align-items: flex-start;
+  padding: 10px 0;
+  border-bottom: 1px solid rgba(0,0,0,0.05);
+}
+.course-step:last-child { border: none; }
+.course-step .step-num {
+  width: 28px; height: 28px;
+  background: #2d5a27; color: #fff;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 12px; font-weight: 700;
+  flex-shrink: 0;
+}
+.course-step .step-content { flex: 1; }
+.course-step .step-title {
+  font-size: 14px; font-weight: 600; color: #333;
+}
+.course-step .step-desc {
+  font-size: 12px; color: #888; margin-top: 2px; line-height: 1.5;
+}
+
+.warning-box {
+  background: #fff8f0;
+  border: 1px solid #f0dfc0;
+  border-radius: 10px;
+  padding: 14px;
+  margin-bottom: 10px;
+}
+.warning-box .item {
+  display: flex; gap: 8px; align-items: flex-start;
+  padding: 5px 0; font-size: 13px; color: #7a5a20;
+  line-height: 1.6;
+}
+.warning-box .item .bullet { flex-shrink: 0; }
+
+.danger-box {
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  border-radius: 10px;
+  padding: 14px;
+  margin-bottom: 10px;
+}
+.danger-box .item {
+  display: flex; gap: 8px; align-items: flex-start;
+  padding: 5px 0; font-size: 13px; color: #991b1b;
+  line-height: 1.6;
+}
+
+.tip-box {
+  background: #f0fdf4;
+  border: 1px solid #bbf7d0;
+  border-radius: 10px;
+  padding: 14px;
+}
+.tip-box h4 {
+  font-size: 12px; font-weight: 700; color: #166534;
+  margin-bottom: 6px;
+}
+.tip-box p {
+  font-size: 12px; color: #15803d; line-height: 1.7;
+}
+
+.facility-list {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 8px;
+}
+.facility-chip {
+  background: #f8f7f4;
+  border-radius: 10px;
+  padding: 12px;
+  text-align: center;
+}
+.facility-chip .emoji { font-size: 22px; margin-bottom: 4px; }
+.facility-chip .name { font-size: 12px; font-weight: 600; color: #333; }
+.facility-chip .note { font-size: 10px; color: #999; margin-top: 2px; }
+
+.map-placeholder {
+  background: #e8f5e9;
+  border: 2px dashed #a5d6a7;
+  border-radius: 12px;
+  padding: 30px 20px;
+  text-align: center;
+  margin-bottom: 10px;
+}
+.map-placeholder .emoji { font-size: 36px; margin-bottom: 8px; }
+.map-placeholder p { font-size: 13px; color: #2e7d32; font-weight: 600; }
+.map-placeholder small { font-size: 11px; color: #66bb6a; }
+
+.link-btn {
+  display: block;
+  padding: 12px;
+  background: #2d5a27;
+  color: #fff;
+  border-radius: 10px;
+  text-align: center;
+  text-decoration: none;
+  font-size: 13px;
+  font-weight: 600;
+  margin-top: 10px;
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>🌲 화담숲 · 화담채 안내</h1>
+  <p>2026 예산예화여자고등학교 연찬회 · 7월 4일(토)</p>
+</div>
+
+<div class="accordion-section">
+
+  <!-- 1. 화담숲 소개 -->
+  <div class="accordion-item open">
+    <div class="accordion-header" onclick="toggleAccordion(this)">
+      <span class="icon">🌳</span>
+      <div class="text">
+        <div class="title">화담숲 소개</div>
+        <div class="desc">LG 상록재단이 조성한 생태 수목원</div>
+      </div>
+      <span class="arrow">▼</span>
+    </div>
+    <div class="accordion-body">
+      <div class="accordion-content">
+        <div class="info-card">
+          <p>화담숲은 LG상록재단이 약 17만㎡(5만여 평) 규모로 조성한 생태 수목원입니다. '정답게 이야기를 나누는 숲'이라는 뜻의 화담(和談)처럼, 자연과 사람이 어우러지는 공간입니다. 4,300여 종의 국내외 식물이 17개 테마원에 걸쳐 전시되어 있습니다.</p>
+        </div>
+        <div class="info-card">
+          <h4>📌 기본 정보</h4>
+          <div class="row"><span class="label">주소</span><span class="value">경기 광주시 도척면 도척윗로 278-1</span></div>
+          <div class="row"><span class="label">운영시간</span><span class="value">09:00 ~ 18:00 (마감 17:00)</span></div>
+          <div class="row"><span class="label">휴원일</span><span class="value">매주 월요일</span></div>
+          <div class="row"><span class="label">규모</span><span class="value">약 5만 평 / 17개 테마원</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2. 화담채 -->
+  <div class="accordion-item">
+    <div class="accordion-header" onclick="toggleAccordion(this)">
+      <span class="icon">🎨</span>
+      <div class="text">
+        <div class="title">화담채 안내</div>
+        <div class="desc">10:00~10:20 관람 예정</div>
+      </div>
+      <span class="arrow">▼</span>
+    </div>
+    <div class="accordion-body">
+      <div class="accordion-content">
+        <div class="info-card">
+          <p>화담채는 화담숲의 이야기를 담아낸 전시·문화 공간입니다. 본격적인 숲 관람 전에 들러보면 화담숲을 더 깊이 이해하는 데 도움이 됩니다. 계절별 특별 전시와 영상 콘텐츠를 통해 화담숲의 사계절을 미리 만나볼 수 있습니다.</p>
+        </div>
+        <div class="tip-box">
+          <h4>💡 관람 팁</h4>
+          <p>화담채 → 모노레일 → 화담숲 순서로 관람하면 동선이 가장 효율적입니다. 화담채 관람은 약 15~20분이면 충분합니다.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 3. 관람 코스 -->
+  <div class="accordion-item">
+    <div class="accordion-header" onclick="toggleAccordion(this)">
+      <span class="icon">🗺️</span>
+      <div class="text">
+        <div class="title">관람 코스 (우리 동선)</div>
+        <div class="desc">화담채 → 모노레일 → 화담숲</div>
+      </div>
+      <span class="arrow">▼</span>
+    </div>
+    <div class="accordion-body">
+      <div class="accordion-content">
+        <div class="course-step">
+          <div class="step-num">1</div>
+          <div class="step-content">
+            <div class="step-title">화담채 관람</div>
+            <div class="step-desc">10:00 ~ 10:20 · 전시·영상 관람</div>
+          </div>
+        </div>
+        <div class="course-step">
+          <div class="step-num">2</div>
+          <div class="step-content">
+            <div class="step-title">모노레일 이동</div>
+            <div class="step-desc">10:20 ~ 10:30 · 1승강장에서 탑승</div>
+          </div>
+        </div>
+        <div class="course-step">
+          <div class="step-num">3</div>
+          <div class="step-content">
+            <div class="step-title">모노레일 1→2구간 & 화담숲 관람</div>
+            <div class="step-desc">10:30 ~ 12:00 · 17개 테마원 산책</div>
+          </div>
+        </div>
+        <div class="course-step">
+          <div class="step-num">4</div>
+          <div class="step-content">
+            <div class="step-title">출구 → 버스 탑승</div>
+            <div class="step-desc">12:00 · 평택으로 이동</div>
+          </div>
+        </div>
+
+        <!-- 화담숲 안내 지도 -->
+        <div style="border-radius:10px; overflow:hidden; margin-bottom:10px;">
+          <img src="hwadam_map.png" alt="화담숲 안내 지도" style="width:100%; display:block; border-radius:10px;">
+        </div>
+        <a href="https://www.hwadamsup.com" class="link-btn" target="_blank">🌐 화담숲 공식 홈페이지</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- 4. 부대시설 -->
+  <!-- 4. 부대시설 -->
+  <div class="accordion-item">
+    <div class="accordion-header" onclick="toggleAccordion(this)">
+      <span class="icon">🏪</span>
+      <div class="text">
+        <div class="title">식음·편의시설</div>
+        <div class="desc">카페, 식당, 편의점, 물품보관함 등</div>
+      </div>
+      <span class="arrow">▼</span>
+    </div>
+    <div class="accordion-body">
+      <div class="accordion-content">
+        <div class="info-card">
+          <h4>🍽️ 식음시설</h4>
+          <div class="row"><span class="label">번지없는 주막</span><span class="value">원앙연못 앞</span></div>
+          <div class="row"><span class="label">&nbsp;</span><span class="value" style="font-size:11px; color:#888;">해물파전, 병천순대, 두부김치 등</span></div>
+          <div class="row"><span class="label">화담숲 Café & Shop</span><span class="value">숲 입구 오른편</span></div>
+          <div class="row"><span class="label">&nbsp;</span><span class="value" style="font-size:11px; color:#888;">커피, 음료 / 기념품</span></div>
+          <div class="row"><span class="label">seed green</span><span class="value">매표소 오른쪽</span></div>
+          <div class="row"><span class="label">&nbsp;</span><span class="value" style="font-size:11px; color:#888;">베이커리, 음료 / 기념품</span></div>
+        </div>
+        <div class="info-card">
+          <h4>🏪 편의시설</h4>
+          <div class="row"><span class="label">편의점</span><span class="value">매표소 오른쪽</span></div>
+          <div class="row"><span class="label">&nbsp;</span><span class="value" style="font-size:11px; color:#888;">음료, 아이스크림, 위생용품</span></div>
+          <div class="row"><span class="label">물품보관함</span><span class="value">매표소 왼쪽 (1,000원)</span></div>
+          <div class="row"><span class="label">화장실</span><span class="value">코스 내 여러 곳</span></div>
+          <div class="row"><span class="label">리프트</span><span class="value">야외주차장 하부</span></div>
+          <div class="row"><span class="label">&nbsp;</span><span class="value" style="font-size:11px; color:#888;">금~일, 공휴일 운영 (하행 불가)</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 6. 주의사항 -->
+  <div class="accordion-item">
+    <div class="accordion-header" onclick="toggleAccordion(this)">
+      <span class="icon">⚠️</span>
+      <div class="text">
+        <div class="title">이용 시 주의사항</div>
+        <div class="desc">꼭 읽어주세요!</div>
+      </div>
+      <span class="arrow">▼</span>
+    </div>
+    <div class="accordion-body">
+      <div class="accordion-content">
+        <div class="danger-box">
+          <div class="item"><span class="bullet">🚫</span><span>외부 음식물 반입 금지</span></div>
+          <div class="item"><span class="bullet">🚫</span><span>반려동물 입장 불가 (안내견 제외)</span></div>
+          <div class="item"><span class="bullet">🚫</span><span>흡연 구역 외 흡연 금지</span></div>
+          <div class="item"><span class="bullet">🚫</span><span>식물 채집 및 훼손 금지</span></div>
+        </div>
+        <div class="warning-box">
+          <div class="item"><span class="bullet">⚠️</span><span>경사가 있는 구간이 많으므로 편한 신발 착용을 권장합니다</span></div>
+          <div class="item"><span class="bullet">⚠️</span><span>7월 여름철이므로 자외선 차단제, 모자, 물을 챙겨주세요</span></div>
+          <div class="item"><span class="bullet">⚠️</span><span>우천 시에도 운영되나, 폭우/강풍 시 일부 구간 통제 가능</span></div>
+          <div class="item"><span class="bullet">⚠️</span><span>입장 마감 시간 이후 입장 불가 — 시간 여유를 두고 이동해주세요</span></div>
+        </div>
+        <div class="tip-box">
+          <h4>☀️ 여름 방문 팁</h4>
+          <p>7월은 한여름이므로 가벼운 복장과 운동화를 추천합니다. 숲속이라 그늘이 많지만, 모노레일 대기 구간은 햇볕이 강할 수 있으니 양산이나 모자를 준비하세요. 벌레 기피제도 유용합니다!</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+function toggleAccordion(header) {
+  const item = header.closest('.accordion-item');
+  item.classList.toggle('open');
+}
+</script>
+
+</body>
+</html>

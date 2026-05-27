@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>🍽️ 식당 안내 & 카페 주문</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: 'Noto Sans KR', sans-serif;
+  background: #f8f6f3;
+  color: #2d2d2d;
+  -webkit-font-smoothing: antialiased;
+  padding-bottom: 40px;
+}
+.header {
+  background: linear-gradient(135deg, #1a472a 0%, #2d6a4f 50%, #40916c 100%);
+  padding: 32px 20px 28px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+.header::before {
+  content: '';
+  position: absolute;
+  top: -50%; left: -50%;
+  width: 200%; height: 200%;
+  background: radial-gradient(circle, rgba(255,255,255,0.05) 0%, transparent 60%);
+  animation: shimmer 8s ease-in-out infinite;
+}
+@keyframes shimmer {
+  0%, 100% { transform: translate(0, 0); }
+  50% { transform: translate(20px, 10px); }
+}
+.header h1 { font-size: 22px; font-weight: 800; color: #fff; letter-spacing: -0.5px; position: relative; }
+.header p { font-size: 13px; color: rgba(255,255,255,0.75); margin-top: 6px; font-weight: 300; position: relative; }
+
+.tab-nav {
+  display: flex; background: #fff;
+  border-bottom: 2px solid #e8e4df;
+  position: sticky; top: 0; z-index: 100;
+}
+.tab-btn {
+  flex: 1; padding: 14px 8px; font-size: 14px; font-weight: 600; color: #999;
+  background: none; border: none; cursor: pointer; position: relative;
+  transition: color 0.3s; font-family: inherit;
+}
+.tab-btn.active { color: #1a472a; }
+.tab-btn.active::after {
+  content: ''; position: absolute; bottom: -2px; left: 20%; width: 60%;
+  height: 3px; background: #2d6a4f; border-radius: 2px;
+}
+
+.tab-content { display: none; animation: fadeIn 0.4s ease; }
+.tab-content.active { display: block; }
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.restaurant-section { padding: 20px 16px; }
+.meal-label {
+  display: inline-block; font-size: 11px; font-weight: 700; color: #fff;
+  background: #2d6a4f; padding: 4px 12px; border-radius: 20px;
+  margin-bottom: 12px; letter-spacing: 0.5px;
+}
+.meal-label.dinner { background: #8b5e3c; }
+.meal-label.breakfast { background: #4a7c59; }
+.meal-label.lunch { background: #c4753b; }
+.meal-label.cafe { background: #6b4c3b; }
+
+.restaurant-card {
+  background: #fff; border-radius: 16px; padding: 20px;
+  margin-bottom: 16px; box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+  border: 1px solid rgba(0,0,0,0.04);
+}
+.restaurant-card h3 { font-size: 18px; font-weight: 700; color: #1a472a; margin-bottom: 4px; }
+.restaurant-card .subtitle { font-size: 13px; color: #888; margin-bottom: 12px; }
+.restaurant-card .info-row {
+  display: flex; align-items: flex-start; gap: 8px;
+  margin-bottom: 8px; font-size: 13px; color: #555; line-height: 1.5;
+}
+.restaurant-card .info-row .icon { flex-shrink: 0; width: 20px; text-align: center; font-size: 14px; }
+.restaurant-card .menu-preview {
+  background: #f8f6f3; border-radius: 10px; padding: 14px; margin-top: 12px;
+}
+.restaurant-card .menu-preview h4 {
+  font-size: 12px; font-weight: 700; color: #1a472a; margin-bottom: 8px; letter-spacing: 0.5px;
+}
+.menu-item {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 6px 0; font-size: 13px;
+  border-bottom: 1px solid rgba(0,0,0,0.05);
+}
+.menu-item:last-child { border: none; }
+.menu-item .name { color: #333; }
+.menu-item .price { color: #c4753b; font-weight: 600; font-size: 12px; }
+
+.tbd-notice {
+  background: #fff8f0; border: 1px dashed #e0c9a8; border-radius: 12px;
+  padding: 20px; text-align: center; margin-bottom: 16px;
+}
+.tbd-notice .emoji { font-size: 28px; margin-bottom: 8px; }
+.tbd-notice p { font-size: 14px; color: #8b7355; font-weight: 500; }
+.tbd-notice small { font-size: 12px; color: #b5a08a; margin-top: 4px; display: block; }
+
+/* Cafe Order */
+.order-section { padding: 20px 16px; }
+.order-card {
+  background: #fff; border-radius: 16px; padding: 24px 20px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.06); border: 1px solid rgba(0,0,0,0.04);
+}
+.order-card h3 { font-size: 18px; font-weight: 700; color: #6b4c3b; margin-bottom: 4px; }
+.order-card .store-info { font-size: 12px; color: #999; margin-bottom: 20px; }
+
+.form-group { margin-bottom: 18px; }
+.form-group label { display: block; font-size: 13px; font-weight: 600; color: #444; margin-bottom: 6px; }
+.form-group input, .form-group select {
+  width: 100%; padding: 12px 14px; border: 2px solid #e8e4df; border-radius: 10px;
+  font-size: 15px; font-family: inherit; color: #333; background: #faf9f7;
+  transition: border-color 0.2s; -webkit-appearance: none; appearance: none;
+}
+.form-group select {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23999' fill='none' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat; background-position: right 14px center; padding-right: 36px;
+}
+.form-group input:focus, .form-group select:focus {
+  outline: none; border-color: #2d6a4f; background: #fff;
+}
+
+.temp-toggle, .size-toggle { display: flex; gap: 8px; }
+.temp-toggle { margin-bottom: 12px; }
+.size-toggle { margin-top: 6px; }
+.temp-btn, .size-btn {
+  flex: 1; padding: 10px; border: 2px solid #e8e4df; border-radius: 10px;
+  background: #faf9f7; font-size: 13px; font-weight: 600; color: #888;
+  cursor: pointer; text-align: center; transition: all 0.2s; font-family: inherit;
+}
+.size-btn.active { border-color: #2d6a4f; background: #edf5f0; color: #1a472a; }
+.temp-btn.active.ice { border-color: #3b82f6; background: #eff6ff; color: #1e40af; }
+.temp-btn.active.hot { border-color: #ef4444; background: #fef2f2; color: #b91c1c; }
+
+.submit-btn {
+  width: 100%; padding: 15px;
+  background: linear-gradient(135deg, #1a472a, #2d6a4f);
+  color: #fff; border: none; border-radius: 12px;
+  font-size: 16px; font-weight: 700; cursor: pointer;
+  font-family: inherit; transition: transform 0.1s; margin-top: 8px;
+}
+.submit-btn:active { transform: scale(0.98); }
+.submit-btn:disabled { background: #ccc; cursor: not-allowed; }
+
+/* Google Forms 안내 */
+.setup-guide {
+  background: #fffbeb; border: 1px solid #fde68a; border-radius: 12px;
+  padding: 16px; margin-top: 20px;
+}
+.setup-guide h4 { font-size: 13px; font-weight: 700; color: #92400e; margin-bottom: 8px; }
+.setup-guide p { font-size: 12px; color: #a16207; line-height: 1.7; }
+.setup-guide code {
+  background: #fef3c7; padding: 2px 6px; border-radius: 4px; font-size: 11px;
+  font-family: monospace;
+}
+
+.order-list { margin-top: 24px; }
+.order-list h4 {
+  font-size: 14px; font-weight: 700; color: #1a472a; margin-bottom: 12px;
+  display: flex; align-items: center; gap: 6px;
+}
+.order-list h4 .count {
+  background: #2d6a4f; color: #fff; font-size: 11px; padding: 2px 8px; border-radius: 10px;
+}
+.order-entry {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 10px 14px; background: #f8f6f3; border-radius: 10px;
+  margin-bottom: 6px; font-size: 13px;
+}
+.order-entry .order-name { font-weight: 600; color: #333; min-width: 50px; }
+.order-entry .order-menu { color: #666; flex: 1; text-align: center; }
+.order-entry .order-temp {
+  font-size: 11px; padding: 2px 8px; border-radius: 6px; font-weight: 600;
+}
+.order-entry .order-temp.ice { background: #dbeafe; color: #1e40af; }
+.order-entry .order-temp.hot { background: #fee2e2; color: #b91c1c; }
+
+.success-toast {
+  position: fixed; top: 20px; left: 50%;
+  transform: translateX(-50%) translateY(-100px);
+  background: #1a472a; color: #fff; padding: 14px 24px; border-radius: 12px;
+  font-size: 14px; font-weight: 600; z-index: 1000;
+  transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  box-shadow: 0 8px 30px rgba(0,0,0,0.2);
+}
+.success-toast.show { transform: translateX(-50%) translateY(0); }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>🍽️ 식당 안내 & 카페 주문</h1>
+  <p>2026 예산예화여자고등학교 연찬회</p>
+</div>
+
+<div class="tab-nav">
+  <button class="tab-btn active" onclick="switchTab('restaurants')">식당 안내</button>
+  <button class="tab-btn" onclick="switchTab('cafe')">☕ 카페 주문</button>
+</div>
+
+<!-- Tab 1: Restaurant Guide -->
+<div id="tab-restaurants" class="tab-content active">
+  <div class="restaurant-section">
+
+    <span class="meal-label dinner">1일차 · 저녁식사</span>
+    <div class="tbd-notice">
+      <div class="emoji">📋</div>
+      <p>저녁 식당은 확정 후 안내됩니다</p>
+      <small>7월 3일(금) 18:00 ~ 20:00</small>
+    </div>
+
+    <span class="meal-label breakfast">2일차 · 조식</span>
+    <div class="restaurant-card">
+      <h3>미라시아 뷔페</h3>
+      <div class="subtitle">곤지암리조트 내 레스토랑</div>
+      <div class="info-row"><span class="icon">🕐</span><span>07:30 ~ 09:30 (조식뷔페)</span></div>
+      <div class="info-row"><span class="icon">📍</span><span>곤지암리조트 내 위치 (아래 지도 참고)</span></div>
+      <!-- 미라시아 위치 지도 (빨간 원 표시) -->
+      <div style="margin-top:10px; border-radius:10px; overflow:hidden;">
+        <img src="konjiam_map_mirasia.jpg" alt="곤지암리조트 지도 - 미라시아 위치" style="width:100%; display:block; border-radius:10px;">
+        <div style="text-align:center; font-size:11px; color:#c44; font-weight:600; margin-top:6px;">🔴 빨간 원 = 미라시아 위치 (담하 2F / 미라시아 1F)</div>
+      </div>
+    </div>
+
+    <span class="meal-label lunch">2일차 · 점심식사</span>
+    <div class="restaurant-card">
+      <h3>진돗가비 불쭈꾸미</h3>
+      <div class="subtitle">평택 맛집</div>
+      <div class="info-row"><span class="icon">🕐</span><span>13:30 ~ 14:30</span></div>
+      <div class="info-row"><span class="icon">📍</span><span>경기도 평택시 당거2길 28 1층</span></div>
+      <div class="info-row"><span class="icon">🍳</span><span>불쭈꾸미 전문점</span></div>
+    </div>
+
+    <span class="meal-label cafe">2일차 · 카페</span>
+    <div class="restaurant-card">
+      <h3>투썸플레이스</h3>
+      <div class="subtitle">평택 리버타워점</div>
+      <div class="info-row"><span class="icon">🕐</span><span>점심식사 후 이용</span></div>
+      <div class="info-row"><span class="icon">📍</span><span>진돗가비 불쭈꾸미 옆</span></div>
+      <div class="info-row"><span class="icon">☕</span><span>메뉴 사전 주문은 <strong>"카페 주문"</strong> 탭에서!</span></div>
+    </div>
+
+  </div>
+</div>
+
+<!-- Tab 2: Cafe Order -->
+<div id="tab-cafe" class="tab-content">
+  <div class="order-section">
+    <div class="order-card">
+      <h3>☕ 투썸플레이스 사전 주문</h3>
+      <div class="store-info">평택 리버타워점 · 7월 4일(토)</div>
+
+      <div class="form-group">
+        <label>이름</label>
+        <input type="text" id="orderName" placeholder="이름을 입력해주세요" maxlength="10">
+      </div>
+
+      <div class="form-group">
+        <label>ICE / HOT 선택</label>
+        <div class="temp-toggle">
+          <button class="temp-btn ice active" onclick="selectTemp('ice')">🧊 ICE</button>
+          <button class="temp-btn hot" onclick="selectTemp('hot')">🔥 HOT</button>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>메뉴 선택</label>
+        <select id="menuSelect">
+          <option value="">-- 메뉴를 선택해주세요 --</option>
+          <optgroup label="☕ 커피">
+            <option value="아메리카노">아메리카노</option>
+            <option value="카페라떼">카페라떼</option>
+            <option value="바닐라 카라멜 마끼아또">바닐라 카라멜 마끼아또</option>
+            <option value="카페모카">카페모카</option>
+            <option value="화이트 초콜릿 모카">화이트 초콜릿 모카</option>
+            <option value="콜드브루">콜드브루</option>
+            <option value="스페니쉬 연유라떼">스페니쉬 연유라떼</option>
+          </optgroup>
+          <optgroup label="🍹 논커피 음료">
+            <option value="초콜릿 라떼">초콜릿 라떼</option>
+            <option value="녹차 라떼">녹차 라떼</option>
+            <option value="딸기 라떼">딸기 라떼</option>
+            <option value="레몬 에이드">레몬 에이드</option>
+            <option value="자몽 에이드">자몽 에이드</option>
+          </optgroup>
+          <optgroup label="🫖 티 (따뜻한 음료 추천)">
+            <option value="로얄 밀크티">로얄 밀크티</option>
+            <option value="얼그레이">얼그레이</option>
+            <option value="캐모마일">캐모마일</option>
+          </optgroup>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label>사이즈</label>
+        <div class="size-toggle">
+          <button class="size-btn active" onclick="selectSize('R')">Regular (R)</button>
+          <button class="size-btn" onclick="selectSize('L')">Large (L) +500원</button>
+        </div>
+      </div>
+
+      <button class="submit-btn" id="submitBtn" onclick="submitOrder()">주문 제출하기</button>
+
+      <!-- Order List (local display) -->
+      <div class="order-list" id="orderList" style="display:none;">
+        <h4>📋 제출된 주문 <span class="count" id="orderCount">0</span></h4>
+        <div id="orderEntries"></div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<div class="success-toast" id="toast">✅ 주문이 제출되었습니다!</div>
+
+<script>
+// ============================================================
+// 🔧 관리자 설정: Google Forms 연동
+// Google Forms의 "미리 채워진 링크"에서 확인한 값으로 교체하세요
+// ============================================================
+const GOOGLE_FORM_URL = 'https://docs.google.com/forms/d/e/1FAIpQLScYhVHSZ5SDzLLBgf1e5Ani-8z2wA4CHCU_OlIQcI02uWvLrg/formResponse';
+const ENTRY_NAME = 'entry.1060712979';
+const ENTRY_TEMP = 'entry.950675004';
+const ENTRY_MENU = 'entry.126222510';
+const ENTRY_SIZE = 'entry.811791968';
+// ============================================================
+
+let selectedTemp = 'ice';
+let selectedSize = 'R';
+let orders = [];
+
+function switchTab(tab) {
+  document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+  document.getElementById('tab-' + tab).classList.add('active');
+  event.target.classList.add('active');
+}
+
+function selectTemp(temp) {
+  selectedTemp = temp;
+  document.querySelectorAll('.temp-btn').forEach(btn => btn.classList.remove('active'));
+  document.querySelector('.temp-btn.' + temp).classList.add('active');
+}
+
+function selectSize(size) {
+  selectedSize = size;
+  document.querySelectorAll('.size-btn').forEach(btn => btn.classList.remove('active'));
+  event.target.classList.add('active');
+}
+
+function submitOrder() {
+  const name = document.getElementById('orderName').value.trim();
+  const menu = document.getElementById('menuSelect').value;
+
+  if (!name) { alert('이름을 입력해주세요.'); return; }
+  if (!menu) { alert('메뉴를 선택해주세요.'); return; }
+
+  const tempLabel = selectedTemp === 'ice' ? 'ICE' : 'HOT';
+  const btn = document.getElementById('submitBtn');
+  btn.disabled = true;
+  btn.textContent = '제출 중...';
+
+  // Google Forms로 전송
+  if (GOOGLE_FORM_URL) {
+    const formData = new URLSearchParams();
+    formData.append(ENTRY_NAME, name);
+    formData.append(ENTRY_TEMP, tempLabel);
+    formData.append(ENTRY_MENU, menu);
+    formData.append(ENTRY_SIZE, selectedSize);
+
+    fetch(GOOGLE_FORM_URL, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: formData.toString()
+    }).then(() => {
+      afterSubmit(name, menu, tempLabel);
+    }).catch(() => {
+      afterSubmit(name, menu, tempLabel);
+    });
+  } else {
+    // Google Forms 미설정 시 로컬만 저장
+    afterSubmit(name, menu, tempLabel);
+  }
+}
+
+function afterSubmit(name, menu, tempLabel) {
+  const order = { name, menu, size: selectedSize, temp: selectedTemp, tempLabel };
+  orders.push(order);
+  renderOrders();
+  showToast();
+
+  // Reset
+  const btn = document.getElementById('submitBtn');
+  btn.disabled = false;
+  btn.textContent = '주문 제출하기';
+  document.getElementById('orderName').value = '';
+  document.getElementById('menuSelect').value = '';
+  selectedSize = 'R';
+  selectedTemp = 'ice';
+  document.querySelectorAll('.size-btn').forEach((b, i) => b.classList.toggle('active', i === 0));
+  document.querySelectorAll('.temp-btn').forEach(b => b.classList.remove('active'));
+  document.querySelector('.temp-btn.ice').classList.add('active');
+}
+
+function renderOrders() {
+  const list = document.getElementById('orderList');
+  const entries = document.getElementById('orderEntries');
+  const count = document.getElementById('orderCount');
+  list.style.display = 'block';
+  count.textContent = orders.length;
+  entries.innerHTML = orders.map(o => `
+    <div class="order-entry">
+      <span class="order-name">${o.name}</span>
+      <span class="order-menu">${o.menu} (${o.size})</span>
+      <span class="order-temp ${o.temp}">${o.temp === 'ice' ? '🧊 ICE' : '🔥 HOT'}</span>
+    </div>
+  `).reverse().join('');
+}
+
+function showToast() {
+  const toast = document.getElementById('toast');
+  toast.classList.add('show');
+  setTimeout(() => toast.classList.remove('show'), 2500);
+}
+</script>
+</body>
+</html>

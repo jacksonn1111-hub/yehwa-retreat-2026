@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>📋 일정표 & 숙소 안내 - 2026 연찬회</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: 'Noto Sans KR', sans-serif;
+  background: #f5f3f0;
+  color: #2d2d2d;
+  -webkit-font-smoothing: antialiased;
+  padding-bottom: 40px;
+}
+
+.header {
+  background: linear-gradient(135deg, #1b3a4b 0%, #2a5f7a 50%, #3d8eb9 100%);
+  padding: 32px 20px 28px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+.header::after {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #e8c170, #d4a853, #e8c170);
+}
+.header h1 { font-size: 22px; font-weight: 800; color: #fff; position: relative; letter-spacing: -0.5px; }
+.header p { font-size: 13px; color: rgba(255,255,255,0.7); margin-top: 6px; font-weight: 300; position: relative; }
+
+.tab-nav {
+  display: flex;
+  background: #fff;
+  border-bottom: 2px solid #e5e1dc;
+  position: sticky; top: 0; z-index: 100;
+}
+.tab-btn {
+  flex: 1; padding: 14px 8px; font-size: 14px; font-weight: 600; color: #999;
+  background: none; border: none; cursor: pointer; position: relative;
+  transition: color 0.3s; font-family: inherit;
+}
+.tab-btn.active { color: #1b3a4b; }
+.tab-btn.active::after {
+  content: ''; position: absolute; bottom: -2px; left: 20%; width: 60%;
+  height: 3px; background: #2a5f7a; border-radius: 2px;
+}
+
+.tab-content { display: none; animation: fadeIn 0.4s ease; }
+.tab-content.active { display: block; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+
+/* Schedule */
+.schedule-section { padding: 20px 16px; }
+.day-header {
+  display: flex; align-items: center; gap: 10px;
+  margin-bottom: 16px; margin-top: 8px;
+}
+.day-badge {
+  background: #1b3a4b; color: #fff;
+  padding: 6px 14px; border-radius: 20px;
+  font-size: 13px; font-weight: 700;
+}
+.day-date { font-size: 13px; color: #888; font-weight: 400; }
+
+.timeline { position: relative; padding-left: 20px; }
+.timeline::before {
+  content: ''; position: absolute; left: 6px; top: 8px; bottom: 8px;
+  width: 2px; background: #ddd; border-radius: 1px;
+}
+.time-item {
+  position: relative; margin-bottom: 4px; padding: 12px 16px;
+  background: #fff; border-radius: 12px;
+  box-shadow: 0 1px 6px rgba(0,0,0,0.04);
+  border: 1px solid rgba(0,0,0,0.03);
+}
+.time-item::before {
+  content: ''; position: absolute; left: -18px; top: 18px;
+  width: 10px; height: 10px; border-radius: 50%;
+  background: #2a5f7a; border: 2px solid #fff;
+  box-shadow: 0 0 0 2px #2a5f7a;
+}
+.time-item.highlight { border-left: 3px solid #e8c170; }
+.time-item .time {
+  font-size: 12px; font-weight: 700; color: #2a5f7a;
+  margin-bottom: 4px; letter-spacing: 0.3px;
+}
+.time-item .activity {
+  font-size: 14px; font-weight: 600; color: #333;
+}
+.time-item .detail {
+  font-size: 12px; color: #888; margin-top: 2px; line-height: 1.5;
+}
+
+/* Resort Info */
+.resort-section { padding: 20px 16px; }
+
+.resort-card {
+  background: #fff; border-radius: 16px; padding: 20px;
+  margin-bottom: 16px; box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+  border: 1px solid rgba(0,0,0,0.04);
+}
+.resort-card h3 {
+  font-size: 17px; font-weight: 700; color: #1b3a4b;
+  margin-bottom: 4px;
+}
+.resort-card .sub { font-size: 12px; color: #999; margin-bottom: 14px; }
+
+.info-block {
+  background: #f8f6f3; border-radius: 10px; padding: 14px;
+  margin-bottom: 10px;
+}
+.info-block h4 {
+  font-size: 12px; font-weight: 700; color: #1b3a4b;
+  margin-bottom: 8px; letter-spacing: 0.5px;
+}
+.info-block .row {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 5px 0; font-size: 13px;
+  border-bottom: 1px solid rgba(0,0,0,0.05);
+}
+.info-block .row:last-child { border: none; }
+.info-block .row .label { color: #555; }
+.info-block .row .value { color: #1b3a4b; font-weight: 600; font-size: 12px; }
+
+.facility-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-top: 12px;
+}
+.facility-item {
+  background: #f8f6f3;
+  border-radius: 10px;
+  padding: 14px 12px;
+  text-align: center;
+}
+.facility-item .emoji { font-size: 24px; margin-bottom: 6px; }
+.facility-item .fname { font-size: 12px; font-weight: 600; color: #333; }
+.facility-item .ftime { font-size: 10px; color: #999; margin-top: 2px; }
+
+.notice-box {
+  background: #fff8f0;
+  border: 1px solid #f0dfc0;
+  border-radius: 12px;
+  padding: 16px;
+  margin-top: 16px;
+}
+.notice-box h4 {
+  font-size: 13px; font-weight: 700; color: #8b6914;
+  margin-bottom: 8px;
+}
+.notice-box ul {
+  list-style: none; padding: 0;
+}
+.notice-box li {
+  font-size: 12px; color: #7a6530; line-height: 1.7;
+  padding-left: 16px; position: relative;
+}
+.notice-box li::before {
+  content: '•'; position: absolute; left: 4px; color: #d4a853;
+}
+
+.contact-bar {
+  display: flex; gap: 8px; margin-top: 16px;
+}
+.contact-btn {
+  flex: 1; padding: 12px;
+  border: 2px solid #e5e1dc; border-radius: 10px;
+  background: #fff; text-align: center;
+  text-decoration: none; color: #333;
+  font-size: 12px; font-weight: 600;
+  font-family: inherit;
+}
+.contact-btn .icon { font-size: 18px; display: block; margin-bottom: 4px; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>📋 일정표 & 숙소 안내</h1>
+  <p>2026 예산예화여자고등학교 연찬회</p>
+</div>
+
+<div class="tab-nav">
+  <button class="tab-btn active" onclick="switchTab('schedule')">📅 일정표</button>
+  <button class="tab-btn" onclick="switchTab('resort')">🏨 숙소 안내</button>
+</div>
+
+<!-- Schedule Tab -->
+<div id="tab-schedule" class="tab-content active">
+  <div class="schedule-section">
+
+    <div class="day-header">
+      <span class="day-badge">DAY 1</span>
+      <span class="day-date">7월 3일 (금)</span>
+    </div>
+    <div class="timeline">
+      <div class="time-item">
+        <div class="time">13:00 ~ 14:50</div>
+        <div class="activity">🚌 학교 → 곤지암리조트</div>
+        <div class="detail">학교 주차장 출발 (버스 이동)</div>
+      </div>
+      <div class="time-item">
+        <div class="time">14:50 ~ 15:00</div>
+        <div class="activity">도착 및 이동</div>
+        <div class="detail">하차, 간단한 정비 후 세미나실(컨퍼런스 L) 이동</div>
+      </div>
+      <div class="time-item highlight">
+        <div class="time">15:00 ~ 17:00</div>
+        <div class="activity">📚 교직원 연수</div>
+        <div class="detail">학교에서 활용하는 AI / 구미정보고 정승해 선생님</div>
+      </div>
+      <div class="time-item">
+        <div class="time">17:00 ~ 17:40</div>
+        <div class="activity">🏨 체크인 및 휴식</div>
+        <div class="detail">리조트 체크인</div>
+      </div>
+      <div class="time-item">
+        <div class="time">17:40 ~ 18:00</div>
+        <div class="activity">저녁식사 식당 이동</div>
+      </div>
+      <div class="time-item highlight">
+        <div class="time">18:00 ~ 20:00</div>
+        <div class="activity">🍽️ 저녁식사</div>
+        <div class="detail">식당 추후 안내</div>
+      </div>
+      <div class="time-item">
+        <div class="time">20:00 ~</div>
+        <div class="activity">🌙 자유시간</div>
+        <div class="detail">버스로 숙소 복귀</div>
+      </div>
+    </div>
+
+    <div class="day-header" style="margin-top: 28px;">
+      <span class="day-badge">DAY 2</span>
+      <span class="day-date">7월 4일 (토)</span>
+    </div>
+    <div class="timeline">
+      <div class="time-item">
+        <div class="time">07:30 ~ 09:30</div>
+        <div class="activity">🍳 조식</div>
+        <div class="detail">리조트 내 미라시아 뷔페</div>
+      </div>
+      <div class="time-item">
+        <div class="time">09:30 ~ 10:00</div>
+        <div class="activity">🚌 화담숲 이동</div>
+        <div class="detail">셔틀 버스 또는 곤돌라 이용</div>
+      </div>
+      <div class="time-item highlight">
+        <div class="time">10:00 ~ 10:20</div>
+        <div class="activity">🎨 화담채 관람</div>
+      </div>
+      <div class="time-item">
+        <div class="time">10:20 ~ 10:30</div>
+        <div class="activity">🚝 모노레일 이동</div>
+      </div>
+      <div class="time-item highlight">
+        <div class="time">10:30 ~ 12:00</div>
+        <div class="activity">🌲 화담숲 관람</div>
+        <div class="detail">모노레일(1→2구간) 이용 및 화담숲 관람</div>
+      </div>
+      <div class="time-item">
+        <div class="time">12:00 ~ 13:30</div>
+        <div class="activity">🚌 평택 이동</div>
+        <div class="detail">곤지암리조트 → 평택 (버스)</div>
+      </div>
+      <div class="time-item highlight">
+        <div class="time">13:30 ~ 14:30</div>
+        <div class="activity">🍽️ 점심 & ☕ 카페</div>
+        <div class="detail">진돗가비 불쭈꾸미 + 투썸플레이스</div>
+      </div>
+      <div class="time-item">
+        <div class="time">14:30 ~ 15:30</div>
+        <div class="activity">🏫 학교 복귀</div>
+        <div class="detail">평택 → 학교 (버스)</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- Resort Tab -->
+<div id="tab-resort" class="tab-content">
+  <div class="resort-section">
+
+    <div class="resort-card">
+      <h3>곤지암리조트</h3>
+      <div class="sub">경기도 광주시 도척면 도척윗로 278</div>
+
+      <!-- 리조트 안내 지도 -->
+      <div style="border-radius:10px; overflow:hidden; margin-bottom:16px;">
+        <img src="konjiam_map.jpg" alt="곤지암리조트 안내 지도" style="width:100%; display:block; border-radius:10px;">
+      </div>
+
+      <h4 style="font-size:13px; font-weight:700; color:#1b3a4b; margin:16px 0 10px;">🍽️ 식음시설</h4>
+      <div class="facility-grid">
+        <div class="facility-item">
+          <div class="emoji">🍽️</div>
+          <div class="fname">미라시아 (1F)</div>
+          <div class="ftime">뷔페 레스토랑</div>
+        </div>
+        <div class="facility-item">
+          <div class="emoji">🍶</div>
+          <div class="fname">담하 (2F)</div>
+          <div class="ftime">한식당</div>
+        </div>
+        <div class="facility-item">
+          <div class="emoji">🍕</div>
+          <div class="fname">라그로타</div>
+          <div class="ftime">이탈리안</div>
+        </div>
+        <div class="facility-item">
+          <div class="emoji">🍜</div>
+          <div class="fname">카페테리아 (2F)</div>
+          <div class="ftime">푸드코트</div>
+        </div>
+        <div class="facility-item">
+          <div class="emoji">🍗</div>
+          <div class="fname">느티나무 BBQ</div>
+          <div class="ftime">바비큐</div>
+        </div>
+        <div class="facility-item">
+          <div class="emoji">🍔</div>
+          <div class="fname">프랭크버거 / BHC</div>
+          <div class="ftime">패스트푸드</div>
+        </div>
+        <div class="facility-item">
+          <div class="emoji">🍦</div>
+          <div class="fname">배스킨라빈스</div>
+          <div class="ftime">아이스크림</div>
+        </div>
+        <div class="facility-item">
+          <div class="emoji">🧋</div>
+          <div class="fname">제주스 크래프트한스</div>
+          <div class="ftime">음료</div>
+        </div>
+      </div>
+
+      <h4 style="font-size:13px; font-weight:700; color:#1b3a4b; margin:16px 0 10px;">🏢 편의·레저시설</h4>
+      <div class="facility-grid">
+        <div class="facility-item">
+          <div class="emoji">🏋️</div>
+          <div class="fname">피트니스 센터</div>
+          <div class="ftime">객실키 필요</div>
+        </div>
+        <div class="facility-item">
+          <div class="emoji">🛁</div>
+          <div class="fname">패밀리 스파 (B2F)</div>
+          <div class="ftime">유료</div>
+        </div>
+        <div class="facility-item">
+          <div class="emoji">🎳</div>
+          <div class="fname">스트라이크 잇 (B2F)</div>
+          <div class="ftime">락볼링장</div>
+        </div>
+        <div class="facility-item">
+          <div class="emoji">🎮</div>
+          <div class="fname">게임·뮤직 캠프</div>
+          <div class="ftime">B1F</div>
+        </div>
+        <div class="facility-item">
+          <div class="emoji">💼</div>
+          <div class="fname">비즈니스 센터</div>
+          <div class="ftime">24시간</div>
+        </div>
+        <div class="facility-item">
+          <div class="emoji">🏪</div>
+          <div class="fname">GS25 편의점</div>
+          <div class="ftime">본점(B1F) / 셀프</div>
+        </div>
+        <div class="facility-item">
+          <div class="emoji">☕</div>
+          <div class="fname">카페라운지</div>
+          <div class="ftime">E빌리지</div>
+        </div>
+        <div class="facility-item">
+          <div class="emoji">🎁</div>
+          <div class="fname">기프트샵</div>
+          <div class="ftime">E빌리지</div>
+        </div>
+      </div>
+
+      <div class="notice-box">
+        <h4>⚠️ 숙소 이용 안내</h4>
+        <ul>
+          <li>일회용 어메니티 무료 제공 불가 (자원재활용법)</li>
+          <li>개인 세면도구(칫솔/치약) 준비 권장</li>
+          <li>타월 추가: 페이스 1,000원 / 바스 1,500원</li>
+          <li>피트니스 이용 시 객실키 필요 (월요일 휴무)</li>
+          <li>22:00 이후 체크인 시 프론트(031-8026-5430) 사전 연락</li>
+        </ul>
+      </div>
+
+      <div class="contact-bar">
+        <a href="tel:1661-8787" class="contact-btn">
+          <span class="icon">📞</span>
+          대표번호
+        </a>
+        <a href="https://www.konjiamresort.co.kr" class="contact-btn" target="_blank">
+          <span class="icon">🌐</span>
+          홈페이지
+        </a>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+function switchTab(tab) {
+  document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+  document.getElementById('tab-' + tab).classList.add('active');
+  event.target.classList.add('active');
+}
+</script>
+
+</body>
+</html>
