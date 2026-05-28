@@ -176,6 +176,98 @@ body {
   font-family: inherit;
 }
 .contact-btn .icon { font-size: 18px; display: block; margin-bottom: 4px; }
+/* Current schedule highlight */
+.time-item.now {
+  background: #eef6ff;
+  border: 2px solid #2a5f7a;
+  box-shadow: 0 2px 12px rgba(42,95,122,0.15);
+  animation: pulse-border 2s ease-in-out infinite;
+}
+.time-item.now::before {
+  background: #e8c170;
+  box-shadow: 0 0 0 2px #e8c170;
+  animation: pulse-dot 2s ease-in-out infinite;
+}
+.time-item.now .time { color: #1b3a4b; }
+.time-item.now .activity { color: #1b3a4b; }
+.now-badge {
+  display: inline-block;
+  font-size: 10px;
+  font-weight: 700;
+  color: #fff;
+  background: #e8c170;
+  padding: 2px 8px;
+  border-radius: 8px;
+  margin-left: 6px;
+  vertical-align: middle;
+  animation: pulse-badge 2s ease-in-out infinite;
+}
+@keyframes pulse-border {
+  0%, 100% { box-shadow: 0 2px 12px rgba(42,95,122,0.15); }
+  50% { box-shadow: 0 2px 20px rgba(42,95,122,0.25); }
+}
+@keyframes pulse-dot {
+  0%, 100% { box-shadow: 0 0 0 2px #e8c170; }
+  50% { box-shadow: 0 0 0 4px rgba(232,193,112,0.4); }
+}
+@keyframes pulse-badge {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
+}
+.time-item.past {
+  opacity: 0.5;
+}
+
+/* Fullscreen map overlay */
+.map-img {
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+.map-img:active { opacity: 0.85; }
+.map-hint {
+  text-align: center; font-size: 11px; color: #999; margin-top: 4px;
+}
+.fullscreen-overlay {
+  display: none;
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.92);
+  z-index: 9999;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  animation: fadeInOverlay 0.3s ease;
+}
+.fullscreen-overlay.show { display: flex; }
+@keyframes fadeInOverlay {
+  from { opacity: 0; } to { opacity: 1; }
+}
+.fullscreen-overlay img {
+  max-width: 95vw;
+  max-height: 85vh;
+  object-fit: contain;
+  border-radius: 8px;
+}
+.fullscreen-close {
+  position: absolute;
+  top: 16px; right: 16px;
+  width: 40px; height: 40px;
+  background: rgba(255,255,255,0.15);
+  border: none;
+  border-radius: 50%;
+  color: #fff;
+  font-size: 22px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.fullscreen-caption {
+  color: rgba(255,255,255,0.6);
+  font-size: 12px;
+  margin-top: 12px;
+  text-align: center;
+}
 </style>
 </head>
 <body>
@@ -199,36 +291,36 @@ body {
       <span class="day-date">7월 3일 (금)</span>
     </div>
     <div class="timeline">
-      <div class="time-item">
+      <div class="time-item" data-day="3" data-start="13:00" data-end="14:50">
         <div class="time">13:00 ~ 14:50</div>
         <div class="activity">🚌 학교 → 곤지암리조트</div>
         <div class="detail">학교 주차장 출발 (버스 이동)</div>
       </div>
-      <div class="time-item">
+      <div class="time-item" data-day="3" data-start="14:50" data-end="15:00">
         <div class="time">14:50 ~ 15:00</div>
         <div class="activity">도착 및 이동</div>
         <div class="detail">하차, 간단한 정비 후 세미나실(컨퍼런스 L) 이동</div>
       </div>
-      <div class="time-item highlight">
+      <div class="time-item highlight" data-day="3" data-start="15:00" data-end="17:00">
         <div class="time">15:00 ~ 17:00</div>
         <div class="activity">📚 교직원 연수</div>
         <div class="detail">학교에서 활용하는 AI / 구미정보고 정승해 선생님</div>
       </div>
-      <div class="time-item">
+      <div class="time-item" data-day="3" data-start="17:00" data-end="17:40">
         <div class="time">17:00 ~ 17:40</div>
         <div class="activity">🏨 체크인 및 휴식</div>
         <div class="detail">리조트 체크인</div>
       </div>
-      <div class="time-item">
+      <div class="time-item" data-day="3" data-start="17:40" data-end="18:00">
         <div class="time">17:40 ~ 18:00</div>
         <div class="activity">저녁식사 식당 이동</div>
       </div>
-      <div class="time-item highlight">
+      <div class="time-item highlight" data-day="3" data-start="18:00" data-end="20:00">
         <div class="time">18:00 ~ 20:00</div>
         <div class="activity">🍽️ 저녁식사</div>
         <div class="detail">식당 추후 안내</div>
       </div>
-      <div class="time-item">
+      <div class="time-item" data-day="3" data-start="20:00" data-end="23:59">
         <div class="time">20:00 ~</div>
         <div class="activity">🌙 자유시간</div>
         <div class="detail">버스로 숙소 복귀</div>
@@ -240,40 +332,40 @@ body {
       <span class="day-date">7월 4일 (토)</span>
     </div>
     <div class="timeline">
-      <div class="time-item">
+      <div class="time-item" data-day="4" data-start="07:30" data-end="09:30">
         <div class="time">07:30 ~ 09:30</div>
         <div class="activity">🍳 조식</div>
         <div class="detail">리조트 내 미라시아 뷔페</div>
       </div>
-      <div class="time-item">
+      <div class="time-item" data-day="4" data-start="09:30" data-end="10:00">
         <div class="time">09:30 ~ 10:00</div>
         <div class="activity">🚌 화담숲 이동</div>
         <div class="detail">셔틀 버스 또는 곤돌라 이용</div>
       </div>
-      <div class="time-item highlight">
+      <div class="time-item highlight" data-day="4" data-start="10:00" data-end="10:20">
         <div class="time">10:00 ~ 10:20</div>
         <div class="activity">🎨 화담채 관람</div>
       </div>
-      <div class="time-item">
+      <div class="time-item" data-day="4" data-start="10:20" data-end="10:30">
         <div class="time">10:20 ~ 10:30</div>
         <div class="activity">🚝 모노레일 이동</div>
       </div>
-      <div class="time-item highlight">
+      <div class="time-item highlight" data-day="4" data-start="10:30" data-end="12:00">
         <div class="time">10:30 ~ 12:00</div>
         <div class="activity">🌲 화담숲 관람</div>
         <div class="detail">모노레일(1→2구간) 이용 및 화담숲 관람</div>
       </div>
-      <div class="time-item">
+      <div class="time-item" data-day="4" data-start="12:00" data-end="13:30">
         <div class="time">12:00 ~ 13:30</div>
         <div class="activity">🚌 평택 이동</div>
         <div class="detail">곤지암리조트 → 평택 (버스)</div>
       </div>
-      <div class="time-item highlight">
+      <div class="time-item highlight" data-day="4" data-start="13:30" data-end="14:30">
         <div class="time">13:30 ~ 14:30</div>
         <div class="activity">🍽️ 점심 & ☕ 카페</div>
         <div class="detail">진돗가비 불쭈꾸미 + 투썸플레이스</div>
       </div>
-      <div class="time-item">
+      <div class="time-item" data-day="4" data-start="14:30" data-end="15:30">
         <div class="time">14:30 ~ 15:30</div>
         <div class="activity">🏫 학교 복귀</div>
         <div class="detail">평택 → 학교 (버스)</div>
@@ -293,7 +385,8 @@ body {
 
       <!-- 리조트 안내 지도 -->
       <div style="border-radius:10px; overflow:hidden; margin-bottom:16px;">
-        <img src="konjiam_map.jpg" alt="곤지암리조트 안내 지도" style="width:100%; display:block; border-radius:10px;">
+        <img src="konjiam_map.jpg" alt="곤지암리조트 안내 지도" class="map-img" style="width:100%; display:block; border-radius:10px;" onclick="openMap(this.src, '곤지암리조트 안내 지도')">
+        <div class="map-hint">👆 탭하면 크게 볼 수 있어요</div>
       </div>
 
       <h4 style="font-size:13px; font-weight:700; color:#1b3a4b; margin:16px 0 10px;">🍽️ 식음시설</h4>
@@ -410,13 +503,86 @@ body {
   </div>
 </div>
 
+<<!-- Fullscreen map overlay -->
+<div class="fullscreen-overlay" id="mapOverlay" onclick="closeMap(event)">
+  <button class="fullscreen-close" onclick="closeMap(event)">✕</button>
+  <img id="mapOverlayImg" src="" alt="">
+  <div class="fullscreen-caption" id="mapOverlayCaption"></div>
+</div>
+
 <script>
+// Tab switching
 function switchTab(tab) {
   document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
   document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
   document.getElementById('tab-' + tab).classList.add('active');
   event.target.classList.add('active');
 }
+
+// Fullscreen map
+function openMap(src, caption) {
+  const overlay = document.getElementById('mapOverlay');
+  document.getElementById('mapOverlayImg').src = src;
+  document.getElementById('mapOverlayCaption').textContent = caption || '';
+  overlay.classList.add('show');
+  document.body.style.overflow = 'hidden';
+}
+function closeMap(e) {
+  if (e.target === document.getElementById('mapOverlayImg')) return;
+  document.getElementById('mapOverlay').classList.remove('show');
+  document.body.style.overflow = '';
+}
+
+// Time-based schedule highlighting
+function highlightCurrentSchedule() {
+  const now = new Date();
+  const month = now.getMonth() + 1; // 1-based
+  const day = now.getDate();
+  const hours = now.getHours();
+  const minutes = now.getMinutes();
+  const currentTime = hours * 60 + minutes; // minutes since midnight
+
+  // Only highlight during retreat dates: July 3-4, 2026
+  if (month !== 7 || (day !== 3 && day !== 4)) return;
+
+  const items = document.querySelectorAll('.time-item[data-day]');
+  let foundCurrent = false;
+
+  items.forEach(item => {
+    const itemDay = parseInt(item.dataset.day);
+    const [startH, startM] = item.dataset.start.split(':').map(Number);
+    const [endH, endM] = item.dataset.end.split(':').map(Number);
+    const startTime = startH * 60 + startM;
+    const endTime = endH * 60 + endM;
+
+    if (itemDay === day && currentTime >= startTime && currentTime < endTime) {
+      // Current schedule
+      item.classList.add('now');
+      const actEl = item.querySelector('.activity');
+      if (actEl && !actEl.querySelector('.now-badge')) {
+        const badge = document.createElement('span');
+        badge.className = 'now-badge';
+        badge.textContent = 'NOW';
+        actEl.appendChild(badge);
+      }
+      // Scroll into view
+      if (!foundCurrent) {
+        setTimeout(() => item.scrollIntoView({ behavior: 'smooth', block: 'center' }), 500);
+      }
+      foundCurrent = true;
+    } else if (
+      (itemDay < day) || 
+      (itemDay === day && endTime <= currentTime)
+    ) {
+      // Past schedule
+      item.classList.add('past');
+    }
+  });
+}
+
+// Run on load and every minute
+highlightCurrentSchedule();
+setInterval(highlightCurrentSchedule, 60000);
 </script>
 
 </body>

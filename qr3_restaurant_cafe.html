@@ -193,6 +193,24 @@ body {
   box-shadow: 0 8px 30px rgba(0,0,0,0.2);
 }
 .success-toast.show { transform: translateX(-50%) translateY(0); }
+
+/* Fullscreen map overlay */
+.map-img { cursor: pointer; transition: opacity 0.2s; }
+.map-img:active { opacity: 0.85; }
+.map-hint { text-align: center; font-size: 11px; color: #999; margin-top: 4px; }
+.fullscreen-overlay {
+  display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.92); z-index: 9999;
+  justify-content: center; align-items: center; flex-direction: column;
+}
+.fullscreen-overlay.show { display: flex; }
+.fullscreen-overlay img { max-width: 95vw; max-height: 85vh; object-fit: contain; border-radius: 8px; }
+.fullscreen-close {
+  position: absolute; top: 16px; right: 16px; width: 40px; height: 40px;
+  background: rgba(255,255,255,0.15); border: none; border-radius: 50%;
+  color: #fff; font-size: 22px; cursor: pointer; display: flex; align-items: center; justify-content: center;
+}
+.fullscreen-caption { color: rgba(255,255,255,0.6); font-size: 12px; margin-top: 12px; }
 </style>
 </head>
 <body>
@@ -224,10 +242,10 @@ body {
       <div class="subtitle">곤지암리조트 내 레스토랑</div>
       <div class="info-row"><span class="icon">🕐</span><span>07:30 ~ 09:30 (조식뷔페)</span></div>
       <div class="info-row"><span class="icon">📍</span><span>곤지암리조트 내 위치 (아래 지도 참고)</span></div>
-      <!-- 미라시아 위치 지도 (빨간 원 표시) -->
+      <!-- 미라시아 위치 지도 (빨간 네모 표시) -->
       <div style="margin-top:10px; border-radius:10px; overflow:hidden;">
-        <img src="konjiam_map_mirasia.jpg" alt="곤지암리조트 지도 - 미라시아 위치" style="width:100%; display:block; border-radius:10px;">
-        <div style="text-align:center; font-size:11px; color:#c44; font-weight:600; margin-top:6px;">🔴 빨간 원 = 미라시아 위치 (담하 2F / 미라시아 1F)</div>
+        <img src="konjiam_map_mirasia.jpg" alt="곤지암리조트 지도 - 미라시아 위치" class="map-img" style="width:100%; display:block; border-radius:10px;" onclick="openMap(this.src, '미라시아 위치 (빨간 네모)')">
+        <div class="map-hint">🔴 빨간 네모 = 미라시아 위치 · 👆 탭하면 크게 볼 수 있어요</div>
       </div>
     </div>
 
@@ -432,6 +450,28 @@ function showToast() {
   toast.classList.add('show');
   setTimeout(() => toast.classList.remove('show'), 2500);
 }
+
+// Fullscreen map
+function openMap(src, caption) {
+  const overlay = document.getElementById('mapOverlay');
+  document.getElementById('mapOverlayImg').src = src;
+  document.getElementById('mapOverlayCaption').textContent = caption || '';
+  overlay.classList.add('show');
+  document.body.style.overflow = 'hidden';
+}
+function closeMap(e) {
+  if (e.target === document.getElementById('mapOverlayImg')) return;
+  document.getElementById('mapOverlay').classList.remove('show');
+  document.body.style.overflow = '';
+}
 </script>
+
+<!-- Fullscreen map overlay -->
+<div class="fullscreen-overlay" id="mapOverlay" onclick="closeMap(event)">
+  <button class="fullscreen-close" onclick="closeMap(event)">✕</button>
+  <img id="mapOverlayImg" src="" alt="">
+  <div class="fullscreen-caption" id="mapOverlayCaption"></div>
+</div>
+
 </body>
 </html>

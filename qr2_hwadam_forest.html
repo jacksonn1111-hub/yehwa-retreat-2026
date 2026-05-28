@@ -210,6 +210,24 @@ body {
   font-weight: 600;
   margin-top: 10px;
 }
+
+/* Fullscreen map overlay */
+.map-img { cursor: pointer; transition: opacity 0.2s; }
+.map-img:active { opacity: 0.85; }
+.map-hint { text-align: center; font-size: 11px; color: #999; margin-top: 4px; }
+.fullscreen-overlay {
+  display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.92); z-index: 9999;
+  justify-content: center; align-items: center; flex-direction: column;
+}
+.fullscreen-overlay.show { display: flex; }
+.fullscreen-overlay img { max-width: 95vw; max-height: 85vh; object-fit: contain; border-radius: 8px; }
+.fullscreen-close {
+  position: absolute; top: 16px; right: 16px; width: 40px; height: 40px;
+  background: rgba(255,255,255,0.15); border: none; border-radius: 50%;
+  color: #fff; font-size: 22px; cursor: pointer; display: flex; align-items: center; justify-content: center;
+}
+.fullscreen-caption { color: rgba(255,255,255,0.6); font-size: 12px; margin-top: 12px; }
 </style>
 </head>
 <body>
@@ -313,7 +331,8 @@ body {
 
         <!-- 화담숲 안내 지도 -->
         <div style="border-radius:10px; overflow:hidden; margin-bottom:10px;">
-          <img src="hwadam_map.png" alt="화담숲 안내 지도" style="width:100%; display:block; border-radius:10px;">
+          <img src="hwadam_map.png" alt="화담숲 안내 지도" class="map-img" style="width:100%; display:block; border-radius:10px;" onclick="openMap(this.src, '화담숲 안내 지도')">
+          <div class="map-hint">👆 탭하면 크게 볼 수 있어요</div>
         </div>
         <a href="https://www.hwadamsup.com" class="link-btn" target="_blank">🌐 화담숲 공식 홈페이지</a>
       </div>
@@ -389,10 +408,29 @@ body {
 
 </div>
 
+<!-- Fullscreen map overlay -->
+<div class="fullscreen-overlay" id="mapOverlay" onclick="closeMap(event)">
+  <button class="fullscreen-close" onclick="closeMap(event)">✕</button>
+  <img id="mapOverlayImg" src="" alt="">
+  <div class="fullscreen-caption" id="mapOverlayCaption"></div>
+</div>
+
 <script>
 function toggleAccordion(header) {
   const item = header.closest('.accordion-item');
   item.classList.toggle('open');
+}
+function openMap(src, caption) {
+  const overlay = document.getElementById('mapOverlay');
+  document.getElementById('mapOverlayImg').src = src;
+  document.getElementById('mapOverlayCaption').textContent = caption || '';
+  overlay.classList.add('show');
+  document.body.style.overflow = 'hidden';
+}
+function closeMap(e) {
+  if (e.target === document.getElementById('mapOverlayImg')) return;
+  document.getElementById('mapOverlay').classList.remove('show');
+  document.body.style.overflow = '';
 }
 </script>
 
